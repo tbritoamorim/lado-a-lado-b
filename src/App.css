@@ -422,3 +422,56 @@
   .topbar-actions { gap: 10px; }
   .theme-toggle { width: 34px; height: 34px; }
 }
+
+
+/* Profile selection */
+.profile-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  padding: 48px 24px;
+  background:
+    radial-gradient(ellipse at 50% 42%, #e9dfd0 0%, transparent 58%),
+    var(--paper);
+}
+.profile-picker { width: min(680px, 100%); text-align: center; }
+.profile-brand { display: flex; flex-direction: column; align-items: center; margin-bottom: 74px; }
+.profile-brand .brand-mark { width: 48px; height: 48px; margin-bottom: 12px; }
+.profile-brand .brand-name { font-size: 20px; }
+.profile-brand .brand-caption { margin-top: 5px; }
+.profile-picker > .eyebrow { margin-bottom: 17px; }
+.profile-picker h1 { margin: 0; font-size: clamp(48px, 7vw, 72px); line-height: .98; letter-spacing: -2.8px; font-weight: 700; }
+.profile-picker h1 em { color: var(--red); font-family: var(--serif); font-weight: 500; }
+.profile-intro { margin: 18px 0 35px; color: #777064; font-size: 14px; }
+.profile-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 540px; margin: 0 auto; }
+.profile-card { position: relative; min-height: 218px; padding: 27px 20px 23px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--line); background: var(--paper-light); color: var(--ink); cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.profile-card:hover { transform: translateY(-4px); border-color: #b88d78; box-shadow: 0 12px 30px #382d2014; }
+.profile-avatar { width: 76px; height: 76px; display: grid; place-items: center; border-radius: 50%; font: 500 32px var(--serif); }
+.profile-avatar-matheus { background: #d9c7b3; color: #604c3d; }
+.profile-avatar-thiago { background: #c7cec0; color: #455343; }
+.profile-card-name { margin-top: 16px; font: 600 22px var(--serif); }
+.profile-card-caption { margin-top: 5px; color: #9b9386; font: 9px var(--mono); letter-spacing: 1.2px; }
+.profile-card-arrow { position: absolute; right: 17px; bottom: 17px; color: #a18c7a; opacity: 0; transform: translateX(-4px); transition: .2s; }
+.profile-card:hover .profile-card-arrow { opacity: 1; transform: translateX(0); }
+.profile-footer { display: block; margin-top: 62px; color: #a39b8e; font: 9px var(--mono); letter-spacing: 1.1px; }
+.profile-theme-toggle { position: absolute; top: 25px; right: 26px; }
+.profile-switch { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px 4px 4px; border: 1px solid var(--line); border-radius: 22px; background: transparent; color: var(--ink); font-size: 12px; cursor: pointer; }
+.profile-avatar-mini { width: 27px; height: 27px; font: 500 13px var(--serif); }
+.dark-mode.profile-screen { background: radial-gradient(ellipse at 50% 42%, #292c27 0%, transparent 58%), var(--paper); }
+.dark-mode .profile-intro { color: #b8b6aa; }
+.dark-mode .profile-card { background: #202422; border-color: var(--line); }
+.dark-mode .profile-card:hover { border-color: #9d7164; box-shadow: 0 12px 30px #0003; }
+.dark-mode .profile-card-caption, .dark-mode .profile-footer { color: #999b91; }
+.dark-mode .profile-avatar-matheus { background: #59483c; color: #f0d6c1; }
+.dark-mode .profile-avatar-thiago { background: #414c40; color: #d5e1ce; }
+.dark-mode .profile-switch { color: var(--ink); border-color: #555b54; }
+@media (max-width: 560px) {
+  .profile-brand { margin-bottom: 54px; }
+  .profile-options { gap: 10px; }
+  .profile-card { min-height: 185px; padding: 20px 10px; }
+  .profile-avatar { width: 64px; height: 64px; font-size: 28px; }
+  .profile-card-name { font-size: 19px; }
+  .profile-footer { margin-top: 48px; font-size: 8px; }
+  .profile-switch > span:last-child { display: none; }
+}
