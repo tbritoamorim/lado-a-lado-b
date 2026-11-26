@@ -99,6 +99,12 @@ function AlbumCard({ album, onSelect }: { album: Album; onSelect: (album: Album)
 }
 
 function App() {
+  const [selectedUser, setSelectedUser] = useState<'Matheus' | 'Thiago' | null>(() => {
+    try {
+      const saved = window.localStorage.getItem('lado-ab-user')
+      return saved === 'Matheus' || saved === 'Thiago' ? saved : null
+    } catch { return null }
+  })
   const [page, setPage] = useState<Page>('home')
   const [albums, setAlbums] = useState<Album[]>(initialAlbums)
   const [search, setSearch] = useState('')
@@ -176,6 +182,45 @@ function App() {
     </>
   )
 
+  const chooseUser = (user: 'Matheus' | 'Thiago') => {
+    setSelectedUser(user)
+    try { window.localStorage.setItem('lado-ab-user', user) } catch { /* storage may be unavailable */ }
+  }
+
+  const switchUser = () => {
+    setSelectedUser(null)
+    try { window.localStorage.removeItem('lado-ab-user') } catch { /* storage may be unavailable */ }
+  }
+
+  if (!selectedUser) {
+    return (
+      <div className={darkMode ? 'app-shell dark-mode profile-screen' : 'app-shell profile-screen'}>
+        <div className="profile-picker">
+          <div className="profile-brand">
+            <span className="brand-mark"><span>A</span><i>/</i><span>B</span></span>
+            <span className="brand-name">Lado A <span>/</span> Lado B</span>
+            <span className="brand-caption">A SHARED MUSIC ARCHIVE</span>
+          </div>
+          <p className="eyebrow">TWO SIDES, ONE COLLECTION</p>
+          <h1>Who's listening<br /><em>today?</em></h1>
+          <p className="profile-intro">Choose your profile to step into the archive.</p>
+          <div className="profile-options">
+            {(['Matheus', 'Thiago'] as const).map((user, index) => (
+              <button className="profile-card" key={user} onClick={() => chooseUser(user)} type="button">
+                <span className={index === 0 ? 'profile-avatar profile-avatar-matheus' : 'profile-avatar profile-avatar-thiago'}>{user.charAt(0)}</span>
+                <span className="profile-card-name">{user}</span>
+                <span className="profile-card-caption">{index === 0 ? 'SIDE A' : 'SIDE B'}</span>
+                <span className="profile-card-arrow"><Icon name="arrow" size={18} /></span>
+              </button>
+            ))}
+          </div>
+          <span className="profile-footer">A LITTLE SPACE FOR THE MUSIC YOU SHARE.</span>
+        </div>
+        <button className="profile-theme-toggle theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button>
+      </div>
+    )
+  }
+
   return (
     <div className={darkMode ? 'app-shell dark-mode' : 'app-shell'}>
       <aside className={mobileNavOpen ? 'sidebar sidebar-open' : 'sidebar'}>
@@ -204,7 +249,7 @@ function App() {
         <header className="topbar">
           <button className="mobile-menu" onClick={() => setMobileNavOpen((open) => !open)} aria-label="Toggle navigation"><Icon name="menu" /></button>
           <div className="breadcrumbs"><span>THE ARCHIVE</span><span className="breadcrumb-slash">/</span><strong>{pageTitle.toUpperCase()}</strong></div>
-          <div className="topbar-actions"><span className="today-label">{today}</span><button className="theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button><button className="button button-outline top-add" onClick={() => setShowAdd(true)}><Icon name="plus" size={16} /> Add album</button></div>
+          <div className="topbar-actions"><span className="today-label">{today}</span><button className="profile-switch" onClick={switchUser} type="button" title="Switch profile"><span className="profile-avatar profile-avatar-mini">{selectedUser.charAt(0)}</span><span>{selectedUser}</span></button><button className="theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button><button className="button button-outline top-add" onClick={() => setShowAdd(true)}><Icon name="plus" size={16} /> Add album</button></div>
         </header>
 
         <div className="page-content">
