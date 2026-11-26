@@ -36,7 +36,6 @@ const initialAlbums: Album[] = [
 const catalogLyrics = [
   { text: "I'm not here, this isn't happening.", song: "How to Disappear Completely", artist: "Radiohead" },
   { text: "Just 'cause you feel it doesn't mean it's there.", song: "Weird Fishes/Arpeggi", artist: "Radiohead" },
-  { text: "Everybody leaves if they get the chance.", song: "Weird Fishes/Arpeggi", artist: "Radiohead" },
   { text: "Fall back into place.", song: "Space Song", artist: "Beach House" },
 ]
 
