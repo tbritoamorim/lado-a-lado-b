@@ -211,7 +211,7 @@ function App() {
           <div className="profile-options">
             {(['Matheus', 'Thiago'] as const).map((user, index) => (
               <button className="profile-card" key={user} onClick={() => chooseUser(user)} type="button">
-                <span className={index === 0 ? 'profile-avatar profile-avatar-matheus profile-avatar-photo' : 'profile-avatar profile-avatar-thiago'}>{user === 'Matheus' ? <img src={matheusAvatar} alt="" /> : <img src={thiagoAvatar} alt="" />}</span>
+                <span className={index === 0 ? 'profile-avatar profile-avatar-matheus profile-avatar-photo' : 'profile-avatar profile-avatar-thiago profile-avatar-photo'}>{user === 'Matheus' ? <img src={matheusAvatar} alt="" /> : <img src={thiagoAvatar} alt="" />}</span>
                 <span className="profile-card-name">{user}</span>
                 <span className="profile-card-caption">{index === 0 ? 'SIDE A' : 'SIDE B'}</span>
                 <span className="profile-card-arrow"><Icon name="arrow" size={18} /></span>
@@ -253,7 +253,7 @@ function App() {
         <header className="topbar">
           <button className="mobile-menu" onClick={() => setMobileNavOpen((open) => !open)} aria-label="Toggle navigation"><Icon name="menu" /></button>
           <div className="breadcrumbs"><span>THE ARCHIVE</span><span className="breadcrumb-slash">/</span><strong>{pageTitle.toUpperCase()}</strong></div>
-          <div className="topbar-actions"><span className="today-label">{today}</span><button className="profile-switch" onClick={switchUser} type="button" title="Switch profile"><span className={selectedUser === 'Matheus' ? 'profile-avatar profile-avatar-mini profile-avatar-photo' : 'profile-avatar profile-avatar-mini'}>{selectedUser === 'Matheus' ? <img src={matheusAvatar} alt="" /> : <img src={thiagoAvatar} alt="" />}</span><span>{selectedUser}</span></button><button className="theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button><button className="button button-outline top-add" onClick={() => setShowAdd(true)}><Icon name="plus" size={16} /> Add album</button></div>
+          <div className="topbar-actions"><span className="today-label">{today}</span><button className="profile-switch" onClick={switchUser} type="button" title="Switch profile"><span className="profile-avatar profile-avatar-mini profile-avatar-photo">{selectedUser === 'Matheus' ? <img src={matheusAvatar} alt="" /> : <img src={thiagoAvatar} alt="" />}</span><span>{selectedUser}</span></button><button className="theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button><button className="button button-outline top-add" onClick={() => setShowAdd(true)}><Icon name="plus" size={16} /> Add album</button></div>
         </header>
 
         <div className="page-content">
