@@ -257,3 +257,66 @@
   .page-footer { font-size: 7px; padding-inline: 19px; }
   .page-footer span:nth-child(2) { display: none; }
 }
+
+
+/* Readable type and persistent desktop navigation */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  height: 100vh;
+  min-height: 0;
+  overflow-y: auto;
+  flex: none;
+  width: 254px;
+}
+.main-area {
+  width: calc(100% - 254px);
+  min-height: 100vh;
+  margin-left: 254px;
+}
+.nav-item { font-size: 14px; min-height: 46px; }
+.home-lede, .page-intro { font-size: 14px; color: #625e55; }
+.button { font-size: 13px; }
+.eyebrow, .nav-label { font-size: 10px; letter-spacing: .8px; font-weight: 650; }
+.brand-name { font-size: 18px; font-weight: 650; letter-spacing: -.3px; }
+.brand-mark { font-family: inherit; font-weight: 700; }
+.brand-caption, .sidebar-foot { font-size: 9px; letter-spacing: .6px; }
+.home-intro h1, .page-heading-row h1, .subpage h1 {
+  font-weight: 700;
+  letter-spacing: -1.8px;
+  line-height: 1.08;
+}
+.section-heading h2, .recommendation-copy h3, .random-card h2,
+.collection-card h2, .modal-card h2 { font-weight: 650; letter-spacing: -.6px; }
+.metric-label { font-size: 10px; letter-spacing: .35px; }
+.breadcrumbs, .today-label { font-size: 10px; letter-spacing: .5px; }
+.status-label, .quiet-label, .results-line { font-size: 10px; letter-spacing: .4px; }
+.muted { color: #625e55; font-size: 12px; }
+.activity-item p { font-size: 12px; }
+.activity-item span, .recent-copy small, .album-card-artist,
+.recommendation-row-copy small, .collection-card small, .stat-card small { font-size: 11px; }
+.album-card-title, .recent-copy strong { font-size: 14px; font-weight: 650; }
+.album-card-meta { font-size: 10px; }
+.search-box input, .filter-pill, .text-link { font-size: 12px; }
+.tag { font-size: 10px; }
+.stat-card span, .genre-row, .modal-ratings small { font-size: 10px; }
+.modal-note, .side-note p, .recommendation-copy blockquote, .aside-note p { font-family: inherit; font-style: normal; }
+.side-note p { font-size: 15px; line-height: 1.5; }
+.artwork-label { font-family: inherit; font-weight: 750; letter-spacing: .02em; }
+
+@media (max-width: 1100px) {
+  .sidebar { width: 220px; }
+  .main-area { width: calc(100% - 220px); margin-left: 220px; }
+}
+@media (max-width: 820px) {
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    height: 100dvh;
+    width: 260px;
+    min-height: 0;
+    transform: translateX(-100%);
+  }
+  .sidebar.sidebar-open { transform: translateX(0); }
+  .main-area { width: 100%; margin-left: 0; }
+}
