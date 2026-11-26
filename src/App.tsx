@@ -66,6 +66,8 @@ function Icon({ name, size = 18 }: { name: string; size?: number }) {
     close: <><path d="m6 6 12 12M18 6 6 18" /></>,
     menu: <><path d="M4 6h16M4 12h16M4 18h16" /></>,
     check: <path d="m5 12 4 4L19 6" />,
+    moon: <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" />,
+    sun: <><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" /></>,
   }
   return <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" {...common}>{shapes[name] ?? shapes.disc}</svg>
 }
@@ -106,6 +108,9 @@ function App() {
   const [showAdd, setShowAdd] = useState(false)
   const [toast, setToast] = useState('')
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [darkMode, setDarkMode] = useState(() => {
+    try { return window.localStorage.getItem('lado-ab-theme') === 'dark' } catch { return false }
+  })
   const [featuredLyric] = useState(() => catalogLyrics[Math.floor(Math.random() * catalogLyrics.length)])
 
   const today = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())
@@ -141,6 +146,14 @@ function App() {
     setRandomAlbum(choices[Math.floor(Math.random() * choices.length)])
   }
 
+  const toggleTheme = () => {
+    setDarkMode((current) => {
+      const next = !current
+      try { window.localStorage.setItem('lado-ab-theme', next ? 'dark' : 'light') } catch { /* storage may be unavailable */ }
+      return next
+    })
+  }
+
   const addAlbum = (album: Album) => {
     setAlbums((current) => current.map((item) => item.id === album.id ? { ...item, mine: true } : item))
     setShowAdd(false)
@@ -164,7 +177,7 @@ function App() {
   )
 
   return (
-    <div className="app-shell">
+    <div className={darkMode ? 'app-shell dark-mode' : 'app-shell'}>
       <aside className={mobileNavOpen ? 'sidebar sidebar-open' : 'sidebar'}>
         <button className="brand-lockup" onClick={() => navigate('home')} type="button">
           <span className="brand-mark"><span>A</span><i>/</i><span>B</span></span>
@@ -191,7 +204,7 @@ function App() {
         <header className="topbar">
           <button className="mobile-menu" onClick={() => setMobileNavOpen((open) => !open)} aria-label="Toggle navigation"><Icon name="menu" /></button>
           <div className="breadcrumbs"><span>THE ARCHIVE</span><span className="breadcrumb-slash">/</span><strong>{pageTitle.toUpperCase()}</strong></div>
-          <div className="topbar-actions"><span className="today-label">{today}</span><button className="button button-outline top-add" onClick={() => setShowAdd(true)}><Icon name="plus" size={16} /> Add album</button></div>
+          <div className="topbar-actions"><span className="today-label">{today}</span><button className="theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button><button className="button button-outline top-add" onClick={() => setShowAdd(true)}><Icon name="plus" size={16} /> Add album</button></div>
         </header>
 
         <div className="page-content">
