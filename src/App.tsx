@@ -128,8 +128,9 @@ function App() {
   }
 
   const pickRandomAlbum = () => {
-    const pool = albums.filter((album) => !album.listenedByMe)
-    const choices = pool.length ? pool : albums
+    const unheardByBoth = albums.filter((album) => !album.listenedByMe && !album.listenedByHim)
+    const unheardByMe = albums.filter((album) => !album.listenedByMe)
+    const choices = unheardByBoth.length ? unheardByBoth : unheardByMe.length ? unheardByMe : albums
     setRandomAlbum(choices[Math.floor(Math.random() * choices.length)])
   }
 
