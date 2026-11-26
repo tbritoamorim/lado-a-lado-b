@@ -33,12 +33,6 @@ const initialAlbums: Album[] = [
   { id: 9, title: 'Heaven or Las Vegas', artist: 'Cocteau Twins', year: 1990, genre: 'Dream pop', cover: 'cover-heaven', coverLabel: 'HEAVEN OR\nLAS VEGAS', mine: false, his: true, listenedByMe: false, listenedByHim: false, recommendedBy: 'him' },
 ]
 
-const catalogLyrics = [
-  { text: "I'm not here, this isn't happening.", song: "How to Disappear Completely", artist: "Radiohead" },
-  { text: "Just 'cause you feel it doesn't mean it's there.", song: "Weird Fishes/Arpeggi", artist: "Radiohead" },
-  { text: "Fall back into place.", song: "Space Song", artist: "Beach House" },
-]
-
 const navItems: { id: Page; label: string; icon: string }[] = [
   { id: 'home', label: 'Home', icon: 'home' },
   { id: 'my-library', label: 'My library', icon: 'library' },
@@ -106,7 +100,6 @@ function App() {
   const [showAdd, setShowAdd] = useState(false)
   const [toast, setToast] = useState('')
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
-  const [featuredLyric] = useState(() => catalogLyrics[Math.floor(Math.random() * catalogLyrics.length)])
 
   const today = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())
   const pageTitle = navItems.find((item) => item.id === page)?.label ?? (page === 'collections' ? 'Collections' : 'Statistics')
@@ -215,7 +208,7 @@ function App() {
                   <div className="section-heading"><div><p className="eyebrow">THE NEXT LISTEN</p><h2>Waiting for you</h2></div><button className="text-link" onClick={() => navigate('recommendations')}>All recommendations <Icon name="arrow" size={14} /></button></div>
                   <div className="recommendation-feature">
                     <Artwork album={albums[6]} large />
-                    <div className="recommendation-copy"><span className="status-label"><i /> JUST IN · FROM HIM</span><h3>{albums[6].title}</h3><p className="muted">{albums[6].artist} · {albums[6].year}</p><blockquote>“{featuredLyric.text}”<cite>— {featuredLyric.song} · {featuredLyric.artist}</cite></blockquote><button className="button button-dark button-small" onClick={() => setSelectedAlbum(albums[6])}>Open recommendation <Icon name="arrow" size={14} /></button></div>
+                    <div className="recommendation-copy"><span className="status-label"><i /> JUST IN · FROM HIM</span><h3>{albums[6].title}</h3><p className="muted">{albums[6].artist} · {albums[6].year}</p><blockquote>“I think this is right up your alley.”</blockquote><button className="button button-dark button-small" onClick={() => setSelectedAlbum(albums[6])}>Open recommendation <Icon name="arrow" size={14} /></button></div>
                   </div>
                   <div className="section-heading activity-heading"><div><p className="eyebrow">LITTLE BY LITTLE</p><h2>Recent activity</h2></div><span className="quiet-label">A SHARED TIMELINE</span></div>
                   <div className="activity-list">
