@@ -21,6 +21,12 @@ type Album = {
   note?: string
 }
 
+const catalogLyrics = [
+  { text: "Just 'cause you feel it doesn't mean it's there.", song: "Weird Fishes/Arpeggi", artist: "Radiohead" },
+  { text: "When the sun hits.", song: "When the Sun Hits", artist: "Slowdive" },
+  { text: "I wanna be forgotten.", song: "You Only Live Once", artist: "The Strokes" },
+]
+
 const initialAlbums: Album[] = [
   { id: 1, title: 'The New Abnormal', artist: 'The Strokes', year: 2020, genre: 'Indie rock', cover: 'cover-strokes', coverLabel: 'TNA', myRating: 5, hisRating: 4.5, mine: true, his: true, listenedByMe: true, listenedByHim: true, note: 'An album that keeps revealing new details.' },
   { id: 2, title: 'In Rainbows', artist: 'Radiohead', year: 2007, genre: 'Art rock', cover: 'cover-rainbows', coverLabel: 'IN\nRAINBOWS', myRating: 5, hisRating: 4.5, mine: true, his: true, listenedByMe: true, listenedByHim: true, note: 'Weird Fishes deserves its own little universe.' },
@@ -100,6 +106,7 @@ function App() {
   const [showAdd, setShowAdd] = useState(false)
   const [toast, setToast] = useState('')
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [featuredLyric] = useState(() => catalogLyrics[Math.floor(Math.random() * catalogLyrics.length)])
 
   const today = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())
   const pageTitle = navItems.find((item) => item.id === page)?.label ?? (page === 'collections' ? 'Collections' : 'Statistics')
@@ -226,7 +233,7 @@ function App() {
                   <section className="random-card">
                     <span className="random-ornament">✳</span><p className="eyebrow">NEED A PLACE TO START?</p><h2>Let the records<br /><em>decide.</em></h2><p>Pick something neither of you has heard yet.</p><button className="button button-light" onClick={pickRandomAlbum}><Icon name="shuffle" size={16} /> Find a random album</button>
                   </section>
-                  <section className="aside-note"><span>“</span><p>Music is a conversation that doesn't need words.</p><small>— SOMETHING TO REMEMBER</small></section>
+                  <section className="aside-note"><span>“</span><p>{featuredLyric.text}</p><small>— {featuredLyric.song.toUpperCase()} · {featuredLyric.artist.toUpperCase()}</small></section>
                 </aside>
               </div>
             </>
