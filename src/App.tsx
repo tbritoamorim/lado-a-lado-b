@@ -21,6 +21,8 @@ type Album = {
   note?: string
 }
 
+const matheusAvatar = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABkRExYTEBkWFBYcGxkeJT4pJSIiJUw3Oi0+WlBfXllQV1ZkcJB6ZGqIbFZXfap+iJSZoaKhYXiwva+cu5CeoZr/2wBDARscHCUhJUkpKUmaZ1dnmpqampqampqampqampqampqampqampqampqampqampqampqampqampqampqampr/wAARCABgAGADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAgMEBQEA/8QANxAAAgIBAwIDBQUGBwAAAAAAAQIAAxEEEiExQQUTURQiYXGRIzKBodEVQkRiseEkMzRSksHx/8QAGAEAAwEBAAAAAAAAAAAAAAAAAAECAwT/xAAbEQEBAQADAQEAAAAAAAAAAAAAARECEjEhQf/aAAwDAQACEQMRAD8AfiexG7R6idCZ6YnR2c+FYntsZtGeZ3aPWPRhe2d2xm0TwAhowAWdCwlZCxUOpYdgYzbFowoLCCxgWEFhowsLCCxgWEFi0Yz+ek6uR3kP+I/n+kA23r1Yj6SdW09xnh1maLNQ33Sx+Qhb9SO7/SLQ0gc/+zL8X1b1sKKmxkZcjr8p3zNSO7fQTO15Y6jc+ckDrDQUrc8GbvhOqawGqwliBlSf6TAQ8zS8MDPqQiOEbaTk9IrTkb6tg54hh/lI/Z9Rj/V1/T+055OoH8XV9P7Q2BeHGOkIMJDXVbn7TWIPTaMzmzVD+JT/AIn9IBetGMe59TAbTpn3kTnnkCJ8y3/f+cU+5sbufxmetOqpaNOegrz/ACnE42kpYAFiC3T3pIF+E9tbjB+XENLFP7MqYEhiflM/xbwgeytdW2XrGcY6iOe9acB7lX4H9Il/EKyhAJcEYxjENHVgpWdwmt4fpR7QpLEZU5PoImmkdR39ZZXW4A7YivJc4fF/sAYDGo3ZHHEF9BZWN3njbjvxF1Mw4aMYsRgk49MR9k3hhO9VH+YzfgIPvnkP9Y4Cs43A/SEBVjlWz8IanqcCoJ91mx2UdYR2Cvlgp7k9pO+tWl/tHDnP3x2HwEh8atsISyvd5TrhmU8H5zKNlzavTVoS+oqOOBg9TMvW+KNaCmnyi927n9JmEjuYOV9ZcmELnOe88GYHrLB4e5pFiXVvkZwD2kjqVYq3UQ08X6ZsgGaGltFvB6zG09uwYMr09mLQRIrSNbaMzpZCME5I7QBZkQHvFLq/rx1H/cULlPhhapfvAqfQzpNQAyCM/GLexEoW1agKy3vEdee8WN75ZS/w28A/nLZpq9OptZ7Mum7HJ5/GXV6hkUV1VAg+7gkEflMlNatbqVFj47PgwbdZfztOwHoF7D0zDLRsH48MamptiqGr/d6dZlsJZrtU+qqHmHLoeMDtiQ+YNvMc0L/CtWa7hS1mxG7kZAMld2e6xvU5k6hnO48L/WUU6oUraDWG3oVye0LBHMnMr07SRSGGY+g+9iKrjZpbKgTlmHQBiOvcZzF6duRPW2iraTnGT+7mRPVcvFmnp20OvmqVPQEZAktYvyQa/LDcgHgH8esptuHswusAB4GAMEyNLxc7KrvWHPfBA/CVGbILp2OJQlN+oT7FN2OvIk1i+YRsZSBBQbRjJmjMV9V9RIelwB6jiTpXl8MDt+cbknIyees5kDgDmJUMYcAAcdoh19OkcDunmUe8M9pMa5oK+kcpwcxYQgnENFJYCINLRtnkyuvbdVZWCyWD3kbsfhJKEOAg7yrV1bHQNhAB7pHQ/H5yf074jOrd6vKcKw7ZHInqnrBXcCuOCy/pC1ejsJbUUrurJ5284kq5HUEfOUh//9k='
+
 const catalogLyrics = [
   { text: "Just 'cause you feel it doesn't mean it's there.", song: "Weird Fishes/Arpeggi", artist: "Radiohead" },
   { text: "When the sun hits.", song: "When the Sun Hits", artist: "Slowdive" },
@@ -207,7 +209,7 @@ function App() {
           <div className="profile-options">
             {(['Matheus', 'Thiago'] as const).map((user, index) => (
               <button className="profile-card" key={user} onClick={() => chooseUser(user)} type="button">
-                <span className={index === 0 ? 'profile-avatar profile-avatar-matheus' : 'profile-avatar profile-avatar-thiago'}>{user.charAt(0)}</span>
+                <span className={index === 0 ? 'profile-avatar profile-avatar-matheus profile-avatar-photo' : 'profile-avatar profile-avatar-thiago'}>{user === 'Matheus' ? <img src={matheusAvatar} alt="" /> : user.charAt(0)}</span>
                 <span className="profile-card-name">{user}</span>
                 <span className="profile-card-caption">{index === 0 ? 'SIDE A' : 'SIDE B'}</span>
                 <span className="profile-card-arrow"><Icon name="arrow" size={18} /></span>
@@ -249,7 +251,7 @@ function App() {
         <header className="topbar">
           <button className="mobile-menu" onClick={() => setMobileNavOpen((open) => !open)} aria-label="Toggle navigation"><Icon name="menu" /></button>
           <div className="breadcrumbs"><span>THE ARCHIVE</span><span className="breadcrumb-slash">/</span><strong>{pageTitle.toUpperCase()}</strong></div>
-          <div className="topbar-actions"><span className="today-label">{today}</span><button className="profile-switch" onClick={switchUser} type="button" title="Switch profile"><span className="profile-avatar profile-avatar-mini">{selectedUser.charAt(0)}</span><span>{selectedUser}</span></button><button className="theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button><button className="button button-outline top-add" onClick={() => setShowAdd(true)}><Icon name="plus" size={16} /> Add album</button></div>
+          <div className="topbar-actions"><span className="today-label">{today}</span><button className="profile-switch" onClick={switchUser} type="button" title="Switch profile"><span className={selectedUser === 'Matheus' ? 'profile-avatar profile-avatar-mini profile-avatar-photo' : 'profile-avatar profile-avatar-mini'}>{selectedUser === 'Matheus' ? <img src={matheusAvatar} alt="" /> : selectedUser.charAt(0)}</span><span>{selectedUser}</span></button><button className="theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button><button className="button button-outline top-add" onClick={() => setShowAdd(true)}><Icon name="plus" size={16} /> Add album</button></div>
         </header>
 
         <div className="page-content">
