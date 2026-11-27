@@ -27,6 +27,10 @@ begin
     return existing_household_id;
   end if;
 
+  if exists (select 1 from public.households) then
+    raise exception 'Your account has not been added to the shared Lado A / Lado B household yet. Ask the household owner to add you.';
+  end if;
+
   insert into public.households (name)
   values ('Lado A / Lado B')
   returning id into new_household_id;
