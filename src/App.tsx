@@ -118,6 +118,7 @@ function App() {
   const [authBusy, setAuthBusy] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
   const [authEmail, setAuthEmail] = useState('')
+  const [authDisplayName, setAuthDisplayName] = useState<'Matheus' | 'Thiago'>('Matheus')
   const [authPassword, setAuthPassword] = useState('')
   const [authError, setAuthError] = useState('')
   const [authMessage, setAuthMessage] = useState('')
@@ -168,8 +169,7 @@ function App() {
     setAuthBusy(true); setAuthError(''); setAuthMessage('')
     try {
       if (authMode === 'signup') {
-        const name = authEmail.toLowerCase().includes('matheus') ? 'Matheus' : authEmail.toLowerCase().includes('thiago') ? 'Thiago' : authEmail.split('@')[0]
-        const { data, error } = await supabase.auth.signUp({ email: authEmail.trim(), password: authPassword, options: { data: { display_name: name } } })
+        const { data, error } = await supabase.auth.signUp({ email: authEmail.trim(), password: authPassword, options: { data: { display_name: authDisplayName } } })
         if (error) throw error
         if (!data.session) setAuthMessage('Account created. Check your email to confirm it, then sign in.')
         else setAuthMessage('Account created. You are signed in.')
@@ -487,6 +487,7 @@ function App() {
           <h1>{authMode === 'login' ? <>Welcome<br /><em>back.</em></> : <>Join the<br /><em>archive.</em></>}</h1>
           <p className="profile-intro">{authMode === 'login' ? 'Sign in to your side of the archive.' : 'Create your personal account to join the shared archive.'}</p>
           <form className="auth-form" onSubmit={submitAuth}>
+            {authMode === 'signup' && <label>Which side is yours?<select value={authDisplayName} onChange={(event) => setAuthDisplayName(event.target.value as 'Matheus' | 'Thiago')}><option value="Matheus">Matheus · Side A</option><option value="Thiago">Thiago · Side B</option></select></label>}
             <label>Email address<input type="email" autoComplete="email" required value={authEmail} onChange={(event) => setAuthEmail(event.target.value)} placeholder="you@example.com" /></label>
             <label>Password<input type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} minLength={6} required value={authPassword} onChange={(event) => setAuthPassword(event.target.value)} placeholder="At least 6 characters" /></label>
             {authError && <p className="spotify-error" role="alert">{authError}</p>}
