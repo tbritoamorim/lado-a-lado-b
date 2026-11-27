@@ -504,3 +504,26 @@
   .spotify-connect-row { align-items: flex-start; flex-direction: column; }
   .spotify-search { flex-direction: column; }
 }
+
+/* Spotify album details */
+.spotify-album-facts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 16px 0 10px; color: var(--muted); font: 10px var(--mono); text-transform: uppercase; }
+.spotify-open-link { display: inline-flex; align-items: center; gap: 7px; margin: 4px 0 18px; color: var(--red); font-size: 11px; font-weight: 600; text-decoration: none; }
+.spotify-open-link:hover { text-decoration: underline; }
+.spotify-track-section { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 15px 0; }
+.spotify-track-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 9px; }
+.spotify-track-heading h3 { margin: 0; font: 500 19px var(--serif); }
+.spotify-track-heading > span { color: var(--muted); font: 9px var(--mono); }
+.spotify-track-list { list-style: none; padding: 0; margin: 0; }
+.spotify-track-list li { display: flex; align-items: center; gap: 12px; min-height: 34px; padding: 5px 2px; border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent); font-size: 11px; }
+.spotify-track-list li:last-child { border-bottom: 0; }
+.spotify-track-number { width: 18px; flex: 0 0 18px; color: var(--muted); text-align: right; font: 9px var(--mono); }
+.spotify-track-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spotify-track-list time { color: var(--muted); font: 9px var(--mono); }
+.spotify-explicit { margin-left: 7px; padding: 1px 3px; border: 1px solid var(--muted); color: var(--muted); font: 7px var(--mono); }
+.spotify-track-more, .spotify-attribution, .spotify-details-status { color: var(--muted); font-size: 10px; line-height: 1.5; }
+.spotify-track-more { margin: 8px 0 0; }
+.spotify-attribution { margin: 10px 0 0; }
+.spotify-details-status { margin: 14px 0; }
+@media (max-width: 560px) {
+  .spotify-album-facts { gap: 7px 12px; font-size: 9px; }
+}
