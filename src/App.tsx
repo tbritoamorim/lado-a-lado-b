@@ -567,13 +567,6 @@ function App() {
     })
   }
 
-  const addAlbum = (album: Album) => {
-    setAlbums((current) => current.map((item) => item.id === album.id ? { ...item, mine: true } : item))
-    setShowAdd(false)
-    setToast(`“${album.title}” added to your library`)
-    window.setTimeout(() => setToast(''), 2800)
-  }
-
   const renderLibrary = () => (
     <>
       <div className="page-heading-row">
