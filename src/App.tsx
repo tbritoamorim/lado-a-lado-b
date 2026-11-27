@@ -198,7 +198,7 @@ function App() {
   useEffect(() => {
     let cancelled = false
     const loadSpotifyAlbumDetails = async () => {
-      if (!selectedAlbum?.spotifyId) {
+      if (!selectedAlbum) {
         setSpotifyDetailsLoading(false)
         setSpotifyDetailsError('')
         return
@@ -209,9 +209,25 @@ function App() {
       try {
         const connection = await getSpotifyConnection()
         const headers = { Authorization: `Bearer ${connection.accessToken}` }
+        let spotifyId = selectedAlbum.spotifyId
+        if (!spotifyId) {
+          const query = `album:"${selectedAlbum.title}" artist:"${selectedAlbum.artist.split(',')[0]}"`
+          const searchResponse = await fetch(`https://api.spotify.com/v1/search?type=album&limit=10&q=${encodeURIComponent(query)}`, { headers })
+          const searchData = await searchResponse.json()
+          if (!searchResponse.ok) throw new Error(searchData.error?.message || 'Could not find this album on Spotify.')
+          const normalize = (value: string) => value.toLocaleLowerCase().replace(/[^\\p{L}\\p{N}]/gu, '')
+          const expectedTitle = normalize(selectedAlbum.title)
+          const expectedArtist = normalize(selectedAlbum.artist.split(',')[0])
+          const match = (searchData.albums?.items || []).find((item: any) =>
+            normalize(item.name) === expectedTitle &&
+            (item.artists || []).some((artist: any) => normalize(artist.name) === expectedArtist)
+          )
+          if (!match) throw new Error('Could not find an exact Spotify match for this album.')
+          spotifyId = match.id
+        }
         const [albumResponse, tracksResponse] = await Promise.all([
-          fetch(`https://api.spotify.com/v1/albums/${selectedAlbum.spotifyId}`, { headers }),
-          fetch(`https://api.spotify.com/v1/albums/${selectedAlbum.spotifyId}/tracks?limit=50`, { headers }),
+          fetch(`https://api.spotify.com/v1/albums/${spotifyId}`, { headers }),
+          fetch(`https://api.spotify.com/v1/albums/${spotifyId}/tracks?limit=50`, { headers }),
         ])
         const [albumData, tracksData] = await Promise.all([albumResponse.json(), tracksResponse.json()])
         if (!albumResponse.ok) throw new Error(albumData.error?.message || 'Could not load album details from Spotify.')
@@ -221,7 +237,7 @@ function App() {
           releaseDate: albumData.release_date || '',
           releaseDatePrecision: albumData.release_date_precision || 'year',
           totalTracks: albumData.total_tracks ?? tracksData.total ?? 0,
-          spotifyUrl: albumData.external_urls?.spotify || `https://open.spotify.com/album/${selectedAlbum.spotifyId}`,
+          spotifyUrl: albumData.external_urls?.spotify || `https://open.spotify.com/album/${spotifyId}`,
           tracks: (tracksData.items || []).map((track: any) => ({
             id: track.id,
             name: track.name,
@@ -233,8 +249,8 @@ function App() {
           trackTotal: tracksData.total ?? albumData.total_tracks ?? 0,
         }
         if (!cancelled) {
-          setSelectedAlbum((current) => current?.spotifyId === selectedAlbum.spotifyId ? { ...current, spotifyDetails: details, year: Number(details.releaseDate.slice(0, 4)) || current.year } : current)
-          setAlbums((current) => current.map((album) => album.spotifyId === selectedAlbum.spotifyId ? { ...album, spotifyDetails: details, year: Number(details.releaseDate.slice(0, 4)) || album.year } : album))
+          setSelectedAlbum((current) => current?.id === selectedAlbum.id ? { ...current, spotifyId, spotifyDetails: details, year: Number(details.releaseDate.slice(0, 4)) || current.year, cover: albumData.images?.[0]?.url || current.cover } : current)
+          setAlbums((current) => current.map((album) => album.id === selectedAlbum.id ? { ...album, spotifyId, spotifyDetails: details, year: Number(details.releaseDate.slice(0, 4)) || album.year, cover: albumData.images?.[0]?.url || album.cover } : album))
         }
       } catch (error) {
         if (!cancelled) setSpotifyDetailsError(error instanceof Error ? error.message : 'Could not load Spotify album details.')
