@@ -205,7 +205,9 @@ function App() {
           memberships = refreshed.data
         }
         if (!activeHousehold) throw new Error('Could not find or create your shared household.')
-        const memberIds = (memberships || []).filter((m: any) => m.household_id === activeHousehold).map((m: any) => m.user_id)
+        const allMembersResult = await supabase.from('household_members').select('household_id,user_id').eq('household_id', activeHousehold)
+        if (allMembersResult.error) throw allMembersResult.error
+        const memberIds = (allMembersResult.data || []).map((m: any) => m.user_id)
         const otherId = memberIds.find((id: string) => id !== user.id) || null
         const [albumResult, shelfResult, userDataResult, profileResult] = await Promise.all([
           supabase.from('albums').select('*').eq('household_id', activeHousehold).order('created_at', { ascending: false }),
