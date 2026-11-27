@@ -527,3 +527,19 @@
 @media (max-width: 560px) {
   .spotify-album-facts { gap: 7px 12px; font-size: 9px; }
 }
+
+/* Supabase authentication */
+.auth-card { width: min(440px, 100%); text-align: center; }
+.auth-card .profile-brand { margin-bottom: 52px; }
+.auth-card > .eyebrow { margin-bottom: 15px; }
+.auth-card h1 { margin: 0; font-size: clamp(48px, 7vw, 66px); line-height: .98; letter-spacing: -2.8px; font-weight: 700; }
+.auth-card h1 em { color: var(--red); font-family: var(--serif); font-weight: 500; }
+.auth-card .profile-intro { margin: 17px 0 27px; }
+.auth-form { display: grid; gap: 15px; text-align: left; }
+.auth-form label { display: grid; gap: 7px; color: var(--muted); font-size: 11px; font-weight: 600; }
+.auth-form input { width: 100%; box-sizing: border-box; padding: 13px 14px; border: 1px solid var(--line); background: var(--paper-light); color: var(--ink); font: inherit; font-size: 14px; outline: none; }
+.auth-form input:focus { border-color: var(--red); }
+.auth-submit { width: 100%; margin-top: 5px; min-height: 45px; }
+.auth-mode-toggle { margin-top: 15px; }
+.auth-message { color: #39845b; font-size: 12px; line-height: 1.5; }
+.dark-mode .auth-form input { background: #202422; border-color: var(--line); color: var(--ink); }
