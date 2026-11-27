@@ -217,8 +217,6 @@ function App() {
         if (shelfResult.error) throw shelfResult.error
         if (userDataResult.error) throw userDataResult.error
         if (profileResult.error) throw profileResult.error
-        const otherProfile = (profileResult.data || []).find((p: any) => p.id === otherId)
-        const isMatheus = currentSide === 'Matheus'
         const mapped = (albumResult.data || []).map((row: any): Album => {
           const shelves = (shelfResult.data || []).filter((s: any) => s.album_id === row.id)
           const mine = shelves.some((s: any) => s.user_id === user.id)
