@@ -543,3 +543,6 @@
 .auth-mode-toggle { margin-top: 15px; }
 .auth-message { color: #39845b; font-size: 12px; line-height: 1.5; }
 .dark-mode .auth-form input { background: #202422; border-color: var(--line); color: var(--ink); }
+
+.auth-form select { width: 100%; box-sizing: border-box; padding: 13px 14px; border: 1px solid var(--line); background: var(--paper-light); color: var(--ink); font: inherit; font-size: 14px; }
+.dark-mode .auth-form select { background: #202422; border-color: var(--line); color: var(--ink); }
