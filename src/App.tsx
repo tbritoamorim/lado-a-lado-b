@@ -254,7 +254,7 @@ function App() {
     setSpotifyError('')
     try {
       const connection = await getSpotifyConnection()
-      const response = await fetch(`https://api.spotify.com/v1/search?type=album&limit=12&q=${encodeURIComponent(spotifyQuery.trim())}`, { headers: { Authorization: `Bearer ${connection.accessToken}` } })
+      const response = await fetch(`https://api.spotify.com/v1/search?type=album&limit=10&q=${encodeURIComponent(spotifyQuery.trim())}`, { headers: { Authorization: `Bearer ${connection.accessToken}` } })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error?.message || 'Spotify search failed.')
       setSpotifyResults(data.albums?.items || [])
