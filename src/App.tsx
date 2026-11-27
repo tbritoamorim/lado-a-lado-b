@@ -242,7 +242,11 @@ function App() {
           setAlbums(mapped)
         }
       } catch (error) {
-        if (!cancelled) setDatabaseError(error instanceof Error ? error.message : 'Could not load the archive from Supabase.')
+        console.error('Could not load the archive from Supabase:', error)
+        if (!cancelled) {
+          const detail = error instanceof Error ? error.message : String(error)
+          setDatabaseError(detail && detail !== 'undefined' ? `Could not load the archive from Supabase: ${detail}` : 'Could not load the archive from Supabase. Check the browser console for details.')
+        }
       } finally {
         if (!cancelled) setDatabaseLoading(false)
       }
