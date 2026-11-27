@@ -1,75 +1,57 @@
-# React + TypeScript + Vite
+# Lado A / Lado B
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A shared music archive for Matheus and Thiago.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React + TypeScript + Vite
+- Spotify Web API (Authorization Code with PKCE)
+- Supabase (PostgreSQL, Auth, Row Level Security, Realtime)
 
-## React Compiler
+## Supabase setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Create a Supabase project.
+2. Open **SQL Editor** in the Supabase dashboard and run the migration at `supabase/migrations/202611270001_initial_schema.sql`.
+3. In **Project Settings → API**, copy the Project URL and the publishable (or anon) key.
+4. Create a local `.env` file based on `.env.example`:
 
-## Expanding the ESLint configuration
+   ```env
+   VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+   VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+5. Enable email/password sign-in in **Authentication → Providers**. Create accounts for Matheus and Thiago (or invite them).
+6. After both accounts exist, find their user UUIDs under **Authentication → Users**. In the SQL Editor, create the shared household and add both users:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+   ```sql
+   insert into public.households (name)
+   values ('Lado A / Lado B')
+   returning id;
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+   -- Replace the values with the returned household UUID and
+   -- the two user UUIDs shown in Authentication → Users.
+   insert into public.household_members (household_id, user_id, role)
+   values
+     ('HOUSEHOLD_UUID', 'MATHEUS_USER_UUID', 'owner'),
+     ('HOUSEHOLD_UUID', 'THIAGO_USER_UUID', 'member');
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+7. Restart the Vite dev server after setting environment variables.
 
+**Important:** use only the Supabase publishable/anon key in the browser. Never put the service-role or secret key in a `VITE_*` variable or commit it to Git.
+
+The initial schema includes shared albums, each person's shelf, private ratings/notes/listening status, recommendations, and collections. Row Level Security limits data access to members of the household and individual user-owned data.
+
+## Development
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm run build
+npm run lint
 ```
