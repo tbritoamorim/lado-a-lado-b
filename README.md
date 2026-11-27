@@ -11,36 +11,38 @@ A shared music archive for Matheus and Thiago.
 ## Supabase setup
 
 1. Create a Supabase project.
-2. Open **SQL Editor** in the Supabase dashboard and run the migration at `supabase/migrations/202611270001_initial_schema.sql`.
+2. In **SQL Editor**, run both migrations in order:
+   - `supabase/migrations/202611270001_initial_schema.sql`
+   - `supabase/migrations/202611270002_household_bootstrap.sql`
 3. In **Project Settings → API**, copy the Project URL and the publishable (or anon) key.
-4. Create a local `.env` file based on `.env.example`:
+4. Create a local `.env.local` file based on `.env.example`:
 
    ```env
    VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
    VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY
    ```
 
-5. Enable email/password sign-in in **Authentication → Providers**. Create accounts for Matheus and Thiago (or invite them).
-6. After both accounts exist, find their user UUIDs under **Authentication → Users**. In the SQL Editor, create the shared household and add both users:
+5. Enable email/password sign-in in **Authentication → Providers** and create your account. Choose the correct side (Matheus or Thiago) during sign-up.
+6. Sign in to the app. The first account automatically creates the shared **Lado A / Lado B** household. The album catalog starts empty; Spotify imports are saved to the database and to the signed-in member's shelf.
+7. When the second person creates an account, add that user to the existing household from the SQL Editor. Find both user UUIDs in **Authentication → Users**, then run:
 
    ```sql
-   insert into public.households (name)
-   values ('Lado A / Lado B')
-   returning id;
+   select id from public.households where name = 'Lado A / Lado B';
 
-   -- Replace the values with the returned household UUID and
-   -- the two user UUIDs shown in Authentication → Users.
+   -- Replace HOUSEHOLD_UUID and SECOND_USER_UUID with the values above.
    insert into public.household_members (household_id, user_id, role)
-   values
-     ('HOUSEHOLD_UUID', 'MATHEUS_USER_UUID', 'owner'),
-     ('HOUSEHOLD_UUID', 'THIAGO_USER_UUID', 'member');
+   values ('HOUSEHOLD_UUID', 'SECOND_USER_UUID', 'member')
+   on conflict do nothing;
    ```
 
-7. Restart the Vite dev server after setting environment variables.
+   The second person can then sign in and see the shared archive. Do not let the second account initialize a separate household.
+
+8. Restart the Vite dev server after setting environment variables.
 
 **Important:** use only the Supabase publishable/anon key in the browser. Never put the service-role or secret key in a `VITE_*` variable or commit it to Git.
 
-The initial schema includes shared albums, each person's shelf, private ratings/notes/listening status, recommendations, and collections. Row Level Security limits data access to members of the household and individual user-owned data.
+The schema stores shared album metadata separately from each person's shelf and private rating/listening data. Row Level Security limits access to household members and user-owned data.
+
 
 ## Development
 
