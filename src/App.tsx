@@ -260,7 +260,7 @@ function App() {
     }
     void loadSpotifyAlbumDetails()
     return () => { cancelled = true }
-  }, [selectedAlbum?.spotifyId, selectedAlbum?.spotifyDetails, selectedUser])
+  }, [selectedAlbum?.id, selectedAlbum?.spotifyId, selectedAlbum?.spotifyDetails, selectedUser])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
