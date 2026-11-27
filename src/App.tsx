@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import './App.css'
+import { supabase, supabaseConfigured } from './lib/supabase'
 
 type Page = 'home' | 'my-library' | 'his-library' | 'recommendations' | 'our-collection' | 'collections' | 'stats'
 type SpotifyAlbumDetails = {
@@ -112,12 +113,14 @@ function AlbumCard({ album, onSelect }: { album: Album; onSelect: (album: Album)
 }
 
 function App() {
-  const [selectedUser, setSelectedUser] = useState<'Matheus' | 'Thiago' | null>(() => {
-    try {
-      const saved = window.localStorage.getItem('lado-ab-user')
-      return saved === 'Matheus' || saved === 'Thiago' ? saved : null
-    } catch { return null }
-  })
+  const [selectedUser, setSelectedUser] = useState<'Matheus' | 'Thiago' | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [authBusy, setAuthBusy] = useState(false)
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
+  const [authEmail, setAuthEmail] = useState('')
+  const [authPassword, setAuthPassword] = useState('')
+  const [authError, setAuthError] = useState('')
+  const [authMessage, setAuthMessage] = useState('')
   const [page, setPage] = useState<Page>('home')
   const [albums, setAlbums] = useState<Album[]>(initialAlbums)
   const [search, setSearch] = useState('')
@@ -138,6 +141,45 @@ function App() {
   const [spotifyError, setSpotifyError] = useState('')
   const [spotifyDetailsLoading, setSpotifyDetailsLoading] = useState(false)
   const [spotifyDetailsError, setSpotifyDetailsError] = useState('')
+
+  useEffect(() => {
+    if (!supabase) { setAuthLoading(false); return }
+    let active = true
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!active) return
+      if (error) setAuthError(error.message)
+      const user = data.session?.user
+      const name = String(user?.user_metadata?.display_name || user?.email?.split('@')[0] || '').toLowerCase()
+      setSelectedUser(user ? (name.includes('matheus') ? 'Matheus' : 'Thiago') : null)
+      setAuthLoading(false)
+    })
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!active) return
+      const user = session?.user
+      const name = String(user?.user_metadata?.display_name || user?.email?.split('@')[0] || '').toLowerCase()
+      setSelectedUser(user ? (name.includes('matheus') ? 'Matheus' : 'Thiago') : null)
+    })
+    return () => { active = false; listener.subscription.unsubscribe() }
+  }, [])
+
+  const submitAuth = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!supabase) return
+    setAuthBusy(true); setAuthError(''); setAuthMessage('')
+    try {
+      if (authMode === 'signup') {
+        const name = authEmail.toLowerCase().includes('matheus') ? 'Matheus' : authEmail.toLowerCase().includes('thiago') ? 'Thiago' : authEmail.split('@')[0]
+        const { data, error } = await supabase.auth.signUp({ email: authEmail.trim(), password: authPassword, options: { data: { display_name: name } } })
+        if (error) throw error
+        if (!data.session) setAuthMessage('Account created. Check your email to confirm it, then sign in.')
+        else setAuthMessage('Account created. You are signed in.')
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email: authEmail.trim(), password: authPassword })
+        if (error) throw error
+      }
+    } catch (error) { setAuthError(error instanceof Error ? error.message : 'Authentication failed.') }
+    finally { setAuthBusy(false) }
+  }
 
   const today = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())
   const spotifyClientId = '715afe287ac54a53823b9c29084e8f4a'
@@ -427,41 +469,33 @@ function App() {
     </>
   )
 
-  const chooseUser = (user: 'Matheus' | 'Thiago') => {
-    setSelectedUser(user)
-    try { window.localStorage.setItem('lado-ab-user', user) } catch { /* storage may be unavailable */ }
+  const switchUser = async () => {
+    if (supabase) await supabase.auth.signOut()
+    setSelectedUser(null); setAlbums(initialAlbums); setSelectedAlbum(null); setRandomAlbum(null); setShowAdd(false)
   }
 
-  const switchUser = () => {
-    setSelectedUser(null)
-    try { window.localStorage.removeItem('lado-ab-user') } catch { /* storage may be unavailable */ }
-  }
+  if (authLoading) return <div className={darkMode ? 'app-shell dark-mode profile-screen' : 'app-shell profile-screen'}><p className="profile-intro">Opening the archive…</p></div>
+
+  if (!supabaseConfigured || !supabase) return <div className="app-shell profile-screen"><div className="auth-card"><p className="eyebrow">SETUP REQUIRED</p><h1>Connect the<br /><em>archive.</em></h1><p className="profile-intro">Add your Supabase project URL and publishable key to .env.local, then restart Vite.</p></div></div>
 
   if (!selectedUser) {
     return (
       <div className={darkMode ? 'app-shell dark-mode profile-screen' : 'app-shell profile-screen'}>
-        <div className="profile-picker">
-          <div className="profile-brand">
-            <span className="brand-mark"><span>A</span><i>/</i><span>B</span></span>
-            <span className="brand-name">Lado A <span>/</span> Lado B</span>
-            <span className="brand-caption">A SHARED MUSIC ARCHIVE</span>
-          </div>
+        <div className="auth-card">
+          <div className="profile-brand"><span className="brand-mark"><span>A</span><i>/</i><span>B</span></span><span className="brand-name">Lado A <span>/</span> Lado B</span><span className="brand-caption">A SHARED MUSIC ARCHIVE</span></div>
           <p className="eyebrow">TWO SIDES, ONE COLLECTION</p>
-          <h1>Who's listening<br /><em>today?</em></h1>
-          <p className="profile-intro">Choose your profile to step into the archive.</p>
-          <div className="profile-options">
-            {(['Matheus', 'Thiago'] as const).map((user, index) => (
-              <button className="profile-card" key={user} onClick={() => chooseUser(user)} type="button">
-                <span className={index === 0 ? 'profile-avatar profile-avatar-matheus profile-avatar-photo' : 'profile-avatar profile-avatar-thiago profile-avatar-photo'}>{user === 'Matheus' ? <img src={matheusAvatar} alt="" /> : <img src={thiagoAvatar} alt="" />}</span>
-                <span className="profile-card-name">{user}</span>
-                <span className="profile-card-caption">{index === 0 ? 'SIDE A' : 'SIDE B'}</span>
-                <span className="profile-card-arrow"><Icon name="arrow" size={18} /></span>
-              </button>
-            ))}
-          </div>
-          <span className="profile-footer">A LITTLE SPACE FOR THE MUSIC YOU SHARE.</span>
+          <h1>{authMode === 'login' ? <>Welcome<br /><em>back.</em></> : <>Join the<br /><em>archive.</em></>}</h1>
+          <p className="profile-intro">{authMode === 'login' ? 'Sign in to your side of the archive.' : 'Create your personal account to join the shared archive.'}</p>
+          <form className="auth-form" onSubmit={submitAuth}>
+            <label>Email address<input type="email" autoComplete="email" required value={authEmail} onChange={(event) => setAuthEmail(event.target.value)} placeholder="you@example.com" /></label>
+            <label>Password<input type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} minLength={6} required value={authPassword} onChange={(event) => setAuthPassword(event.target.value)} placeholder="At least 6 characters" /></label>
+            {authError && <p className="spotify-error" role="alert">{authError}</p>}
+            {authMessage && <p className="auth-message" role="status">{authMessage}</p>}
+            <button className="button button-dark auth-submit" type="submit" disabled={authBusy}>{authBusy ? 'Please wait…' : authMode === 'login' ? 'Sign in' : 'Create account'}</button>
+          </form>
+          <button className="button button-text auth-mode-toggle" type="button" onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setAuthError(''); setAuthMessage('') }}>{authMode === 'login' ? 'New here? Create an account' : 'Already have an account? Sign in'}</button>
         </div>
-        <button className="profile-theme-toggle theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button>
+        <button className="profile-theme-toggle theme-toggle" onClick={toggleTheme} type="button" aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}><Icon name={darkMode ? 'sun' : 'moon'} size={18} /></button>
       </div>
     )
   }
