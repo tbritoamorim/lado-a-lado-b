@@ -175,7 +175,7 @@
 .genre-track { height: 5px; background: #e8e2d8; }
 .genre-track i { display: block; height: 100%; background: #9b5549; }
 .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: #211e1acc; backdrop-filter: blur(3px); }
-.modal-card { width: min(420px, 100%); max-height: min(90vh, 720px); overflow: auto; position: relative; padding: 27px; background: var(--paper-light); box-shadow: 0 20px 70px #0003; }
+.modal-card { width: min(500px, 100%); max-height: min(90vh, 720px); overflow: auto; position: relative; padding: 27px; background: var(--paper-light); box-shadow: 0 20px 70px #0003; }
 .modal-card > .artwork { width: 100%; max-width: 220px; margin: 0 auto 22px; }
 .modal-close { position: absolute; top: 13px; right: 13px; z-index: 1; width: 31px; height: 31px; display: grid; place-items: center; border: 1px solid var(--line); background: #faf8f2e8; cursor: pointer; }
 .modal-eyebrow { margin-bottom: 8px; }
@@ -491,12 +491,12 @@
 .spotify-search { display: flex; gap: 8px; margin: 14px 0; }
 .spotify-search input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font: inherit; }
 .spotify-search .button { flex: 0 0 auto; }
-.spotify-results { max-height: 340px; overflow-y: auto; margin-top: 12px; }
-.spotify-result { gap: 11px; }
-.spotify-result > span:nth-child(2) { min-width: 0; }
+.spotify-results { max-height: 420px; overflow-y: auto; margin-top: 12px; }
+.spotify-result { gap: 14px; padding: 12px 0; }
+.spotify-result > .spotify-cover { display: block; width: 76px; height: 76px; flex: 0 0 76px; background: var(--line); }
+.spotify-result > span:nth-child(2) { flex: 1; min-width: 0; }
 .spotify-result strong, .spotify-result small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.spotify-cover { width: 43px; height: 43px; flex: 0 0 43px; background: var(--line); }
-.spotify-cover img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.spotify-cover img { width: 100%; height: 100%; display: block; object-fit: contain; }
 .spotify-error { margin: 12px 0 0; color: #c66e5c; font-size: 12px; }
 .dark-mode .spotify-search input { background: #171918; border-color: var(--line); color: var(--ink); }
 @media (max-width: 560px) {
