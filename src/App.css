@@ -491,11 +491,12 @@
 .spotify-search { display: flex; gap: 8px; margin: 14px 0; }
 .spotify-search input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font: inherit; }
 .spotify-search .button { flex: 0 0 auto; }
-.spotify-results { max-height: 420px; overflow-y: auto; margin-top: 12px; }
+.spotify-results { max-height: 420px; overflow-y: auto; margin-top: 12px; padding-right: 12px; scrollbar-gutter: stable; }
 .spotify-result { gap: 14px; padding: 12px 0; }
 .spotify-result > .spotify-cover { display: block; width: 76px; height: 76px; flex: 0 0 76px; background: var(--line); }
 .spotify-result > span:nth-child(2) { flex: 1; min-width: 0; }
-.spotify-result strong, .spotify-result small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spotify-result strong { display: block; font-size: 16px; line-height: 1.3; }
+.spotify-result small { display: block; margin-top: 5px; font-size: 12px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .spotify-cover img { width: 100%; height: 100%; display: block; object-fit: contain; }
 .spotify-error { margin: 12px 0 0; color: #c66e5c; font-size: 12px; }
 .dark-mode .spotify-search input { background: #171918; border-color: var(--line); color: var(--ink); }
