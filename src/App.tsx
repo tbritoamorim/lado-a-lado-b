@@ -126,11 +126,10 @@ function App() {
   const [spotifyQuery, setSpotifyQuery] = useState('')
   const [spotifyLoading, setSpotifyLoading] = useState(false)
   const [spotifyError, setSpotifyError] = useState('')
-  const [spotifyReady, setSpotifyReady] = useState(false)
 
   const today = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())
   const spotifyClientId = '715afe287ac54a53823b9c29084e8f4a'
-  const spotifyRedirectUri = `${window.location.origin}/callback`
+  const spotifyRedirectUri = import.meta.env.DEV ? 'http://127.0.0.1:5173/callback' : `${window.location.origin}/callback`
   const spotifyStorageKey = (user: 'Matheus' | 'Thiago') => `lado-ab-spotify-${user}`
   const spotifyScopes = 'user-read-private'
   const pageTitle = navItems.find((item) => item.id === page)?.label ?? (page === 'collections' ? 'Collections' : 'Statistics')
@@ -187,15 +186,17 @@ function App() {
     const params = new URLSearchParams(window.location.search)
     const code = params.get('code')
     if (window.location.pathname !== '/callback' || (!code && !params.get('error'))) return
+    if (window.sessionStorage.getItem('lado-ab-spotify-callback-processing') === 'yes') return
+    window.sessionStorage.setItem('lado-ab-spotify-callback-processing', 'yes')
     const finishAuthorization = async () => {
       const savedState = window.sessionStorage.getItem('lado-ab-spotify-state')
       const returnedState = params.get('state')
       const user = window.sessionStorage.getItem('lado-ab-spotify-user')
       const verifier = window.sessionStorage.getItem('lado-ab-spotify-verifier')
       window.history.replaceState({}, document.title, '/')
-      if (params.get('error')) { setSpotifyError('Spotify authorization was cancelled.'); setSpotifyReady(true); return }
+      if (params.get('error')) { setToast('Spotify authorization was cancelled.'); window.sessionStorage.removeItem('lado-ab-spotify-callback-processing'); return }
       if (!code || !savedState || returnedState !== savedState || !verifier || (user !== 'Matheus' && user !== 'Thiago')) {
-        setSpotifyError('Could not verify the Spotify sign-in. Please try again.'); setSpotifyReady(true); return
+        setToast('Could not verify Spotify sign-in. Please try again.'); window.sessionStorage.removeItem('lado-ab-spotify-callback-processing'); return
       }
       try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -215,12 +216,12 @@ function App() {
         setSpotifyAccount({ displayName: connection.displayName, id: connection.id })
         setToast(`Spotify connected for ${user}`)
       } catch (error) {
-        setSpotifyError(error instanceof Error ? error.message : 'Spotify sign-in failed.')
+        setToast(error instanceof Error ? error.message : 'Spotify sign-in failed.')
       } finally {
         window.sessionStorage.removeItem('lado-ab-spotify-state')
         window.sessionStorage.removeItem('lado-ab-spotify-user')
         window.sessionStorage.removeItem('lado-ab-spotify-verifier')
-        setSpotifyReady(true)
+        window.sessionStorage.removeItem('lado-ab-spotify-callback-processing')
       }
     }
     void finishAuthorization()
